@@ -1,0 +1,18 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Parfumuri;
+
+namespace Parfumuri
+{
+    public class Angajat
+    {
+        public string Id { get; set; }
+        public string Username { get; set; }
+        public string ParolaHash { get; set; }
+        public Rol RolUtilizator { get; set; }
+        public DateTime UltimaLogare { get; set; }
+    }
+}
