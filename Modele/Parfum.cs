@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Parfumuri;
 
-namespace Parfumuri
+
+namespace Modele
 {
     public class Parfum
     {
@@ -18,9 +18,11 @@ namespace Parfumuri
     public int CantitateMl { get; set; }
     public int Stoc { get; set; }
     public decimal Pret { get; set; }
+    public Sezon SezonRecomandat { get; set; }
+    public Ocazie OcaziiPotrivite { get; set; }
 
-    public Parfum(string id, string nume, string brand, Concentratie concentratie, int cantitateMl, int stoc, decimal pret)
-    {
+        public Parfum(string id, string nume, string brand, Concentratie concentratie, int cantitateMl, int stoc, decimal pret, Sezon sezon = Sezon.Universal, Ocazie ocazii = Ocazie.Casual)
+        {
         Id = id;
         Nume = nume;
         Brand = brand;
@@ -28,6 +30,8 @@ namespace Parfumuri
         CantitateMl = cantitateMl;
         Stoc = stoc;
         Pret = pret;
-    }
+        SezonRecomandat = sezon;
+        OcaziiPotrivite = ocazii;
+        }
 }
 }
