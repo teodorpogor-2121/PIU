@@ -1,7 +1,0 @@
-C:\GIT Proiect\Parfumuri\Parfumuri\bin\Debug\Parfumuri.exe.config
-C:\GIT Proiect\Parfumuri\Parfumuri\bin\Debug\Parfumuri.exe
-C:\GIT Proiect\Parfumuri\Parfumuri\bin\Debug\Parfumuri.pdb
-C:\GIT Proiect\Parfumuri\Parfumuri\obj\Debug\Parfumuri.csproj.AssemblyReference.cache
-C:\GIT Proiect\Parfumuri\Parfumuri\obj\Debug\Parfumuri.csproj.CoreCompileInputs.cache
-C:\GIT Proiect\Parfumuri\Parfumuri\obj\Debug\Parfumuri.exe
-C:\GIT Proiect\Parfumuri\Parfumuri\obj\Debug\Parfumuri.pdb
