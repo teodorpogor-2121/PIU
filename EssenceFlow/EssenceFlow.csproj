@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<EnableXamlHotReload>true</EnableXamlHotReload>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DataAccess\DataAccess.csproj" />
+		<ProjectReference Include="..\Modele\Modele.csproj" />
+	</ItemGroup>
+</Project>
