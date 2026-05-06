@@ -7,7 +7,6 @@ using System;
 namespace DataAccess
 {
     public class AdminParfumuri
-
     {
         private List<Parfum> _parfumuri = new List<Parfum>();
 
@@ -19,6 +18,11 @@ namespace DataAccess
         public List<Parfum> GetToate()
         {
             return _parfumuri.ToList();
+        }
+
+        public Parfum GetDupaId(string id)
+        {
+            return _parfumuri.FirstOrDefault(x => x.Id == id);
         }
 
         public List<Parfum> CautaDupaBrand(string brand)
@@ -36,6 +40,28 @@ namespace DataAccess
                 .OrderBy(p => p.Pret)
                 .ToList();
         }
+
+        // Metoda de modificare parfum Lab 9
+        public bool ModificaParfum(string id, string numeNou, string brandNou,
+                                   Concentratie concentratieNoua, int cantitateMlNou,
+                                   int stocNou, decimal pretNou,
+                                   Sezon sezonNou, Ocazie ocaziiNoi)
+        {
+            Parfum p = _parfumuri.FirstOrDefault(x => x.Id == id);
+            if (p == null) return false;
+
+            p.Nume = numeNou;
+            p.Brand = brandNou;
+            p.Concentratie = concentratieNoua;
+            p.CantitateMl = cantitateMlNou;
+            p.Stoc = stocNou;
+            p.Pret = pretNou;
+            p.SezonRecomandat = sezonNou;
+            p.OcaziiPotrivite = ocaziiNoi;
+            p.DataActualizare = DateTime.Now; // actualizat la data curenta
+            return true;
+        }
+
         public void SalveazaInFisier(string cale)
         {
             using (StreamWriter sw = new StreamWriter(cale))
@@ -72,6 +98,7 @@ namespace DataAccess
             Parfum p = _parfumuri.FirstOrDefault(x => x.Id == id);
             if (p == null) return false;
             p.Pret = pretNou;
+            p.DataActualizare = DateTime.Now;
             return true;
         }
 
@@ -80,6 +107,7 @@ namespace DataAccess
             Parfum p = _parfumuri.FirstOrDefault(x => x.Id == id);
             if (p == null) return false;
             p.Stoc = stocNou;
+            p.DataActualizare = DateTime.Now;
             return true;
         }
     }

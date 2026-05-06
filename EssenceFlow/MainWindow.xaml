@@ -1,224 +1,848 @@
 ﻿<Window x:Class="EssenceFlow.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="EssenceFlow – Adaugă Parfum"
-        Height="620" Width="480"
-        ResizeMode="NoResize"
+        Title="EssenceFlow – Magazin Parfumuri"
+        Height="700" Width="900"
+        MinHeight="550" MinWidth="700"
+        ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
         Background="#F7F3EF">
 
     <Window.Resources>
-        <SolidColorBrush x:Key="CuloareAccent"      Color="#8B4513"/>
-        <SolidColorBrush x:Key="CuloareEroare"      Color="#C0392B"/>
-        <SolidColorBrush x:Key="CuloareLabel"       Color="#3E2723"/>
-        <SolidColorBrush x:Key="CuloareBordura"     Color="#D7CCC8"/>
-        <SolidColorBrush x:Key="CuloareBtnText"     Color="White"/>
 
+        <!-- Culori -->
+        <SolidColorBrush x:Key="AccentBrush"       Color="#8B4513"/>
+        <SolidColorBrush x:Key="AccentLightBrush"  Color="#D7A57A"/>
+        <SolidColorBrush x:Key="ErrorBrush"        Color="#C0392B"/>
+        <SolidColorBrush x:Key="LabelBrush"        Color="#3E2723"/>
+        <SolidColorBrush x:Key="BorderBrush"       Color="#D7CCC8"/>
+        <SolidColorBrush x:Key="SurfaceBrush"      Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="CardBrush"         Color="#FFF8F5"/>
+        <SolidColorBrush x:Key="SubtleBrush"       Color="#795548"/>
+        <SolidColorBrush x:Key="SuccessBrush"      Color="#2E7D32"/>
+        <SolidColorBrush x:Key="InfoBrush"         Color="#1565C0"/>
+
+        <!--  Label -->
         <Style TargetType="Label">
             <Setter Property="FontFamily" Value="Segoe UI"/>
-            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontSize"   Value="12"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="{StaticResource CuloareLabel}"/>
-            <Setter Property="Padding"    Value="0,0,0,3"/>
+            <Setter Property="Foreground" Value="{StaticResource LabelBrush}"/>
+            <Setter Property="Padding"    Value="0,0,0,2"/>
         </Style>
 
+        <!--  TextBox -->
         <Style TargetType="TextBox">
             <Setter Property="FontFamily"               Value="Segoe UI"/>
             <Setter Property="FontSize"                 Value="13"/>
-            <Setter Property="Height"                   Value="34"/>
+            <Setter Property="Height"                   Value="32"/>
             <Setter Property="Padding"                  Value="8,0"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush"              Value="{StaticResource CuloareBordura}"/>
+            <Setter Property="BorderBrush"              Value="{StaticResource BorderBrush}"/>
             <Setter Property="BorderThickness"          Value="1"/>
-            <Setter Property="Background"               Value="White"/>
+            <Setter Property="Background"               Value="{StaticResource SurfaceBrush}"/>
         </Style>
 
+        <!-- ComboBox -->
+        <Style TargetType="ComboBox">
+            <Setter Property="FontFamily"               Value="Segoe UI"/>
+            <Setter Property="FontSize"                 Value="13"/>
+            <Setter Property="Height"                   Value="32"/>
+            <Setter Property="Padding"                  Value="6,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush"              Value="{StaticResource BorderBrush}"/>
+            <Setter Property="Background"               Value="{StaticResource SurfaceBrush}"/>
+        </Style>
+
+        <!--  eroare -->
         <Style TargetType="TextBlock" x:Key="StilEroare">
             <Setter Property="FontFamily" Value="Segoe UI"/>
             <Setter Property="FontSize"   Value="11"/>
-            <Setter Property="Foreground" Value="{StaticResource CuloareEroare}"/>
+            <Setter Property="Foreground" Value="{StaticResource ErrorBrush}"/>
             <Setter Property="Margin"     Value="0,2,0,0"/>
             <Setter Property="Visibility" Value="Collapsed"/>
         </Style>
 
-        <Style TargetType="ComboBox">
-            <Setter Property="FontFamily"               Value="Segoe UI"/>
-            <Setter Property="FontSize"                 Value="13"/>
-            <Setter Property="Height"                   Value="34"/>
-            <Setter Property="Padding"                  Value="6,0"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush"              Value="{StaticResource CuloareBordura}"/>
-            <Setter Property="Background"               Value="White"/>
+        <!--  buton primar (accent) -->
+        <Style x:Key="BtnPrimar" TargetType="Button">
+            <Setter Property="FontFamily"       Value="Segoe UI"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="Height"           Value="36"/>
+            <Setter Property="Padding"          Value="16,0"/>
+            <Setter Property="Background"       Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#6D3410"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
+
+        <!--  buton secundar -->
+        <Style x:Key="BtnSecundar" TargetType="Button">
+            <Setter Property="FontFamily"       Value="Segoe UI"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="Height"           Value="36"/>
+            <Setter Property="Padding"          Value="16,0"/>
+            <Setter Property="Background"       Value="#EFEBE9"/>
+            <Setter Property="Foreground"       Value="{StaticResource AccentBrush}"/>
+            <Setter Property="BorderBrush"      Value="{StaticResource AccentBrush}"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#D7CCC8"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  buton mic (căutare) -->
+        <Style x:Key="BtnMic" TargetType="Button">
+            <Setter Property="FontFamily"       Value="Segoe UI"/>
+            <Setter Property="FontSize"         Value="12"/>
+            <Setter Property="Height"           Value="32"/>
+            <Setter Property="Padding"          Value="10,0"/>
+            <Setter Property="Background"       Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+        </Style>
+
+        <!--  RadioButton -->
+        <Style TargetType="RadioButton">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource LabelBrush}"/>
+            <Setter Property="Margin"     Value="0,0,12,0"/>
+        </Style>
+
+        <!--  CheckBox -->
+        <Style TargetType="CheckBox">
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize"   Value="12"/>
+            <Setter Property="Foreground" Value="{StaticResource LabelBrush}"/>
+            <Setter Property="Margin"     Value="0,0,10,4"/>
+        </Style>
+
+        <!--  separator sectiune -->
+        <Style x:Key="SectiuneTitlu" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Georgia"/>
+            <Setter Property="FontSize"   Value="13"/>
+            <Setter Property="FontStyle"  Value="Italic"/>
+            <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Margin"     Value="0,0,0,6"/>
+        </Style>
+
+        <!--  card panou -->
+        <Style x:Key="CardPanel" TargetType="Border">
+            <Setter Property="Background"       Value="{StaticResource CardBrush}"/>
+            <Setter Property="BorderBrush"      Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="CornerRadius"     Value="6"/>
+            <Setter Property="Padding"          Value="14"/>
+            <Setter Property="Margin"           Value="0,0,0,10"/>
+        </Style>
+
     </Window.Resources>
 
-    <Grid Margin="28,20,28,20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <DockPanel>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,18">
-            <TextBlock Text="EssenceFlow"
-                       FontFamily="Georgia"
-                       FontSize="22"
-                       FontStyle="Italic"
-                       Foreground="{StaticResource CuloareAccent}"
-                       HorizontalAlignment="Center"/>
-            <TextBlock Text="Adaugă Parfum Nou"
-                       FontFamily="Segoe UI"
-                       FontSize="14"
-                       Foreground="#795548"
-                       HorizontalAlignment="Center"
-                       Margin="0,4,0,0"/>
-            <Rectangle Height="1" Fill="{StaticResource CuloareBordura}" Margin="0,12,0,0"/>
-        </StackPanel>
+        <!--  MENIU   -->
+        <Menu DockPanel.Dock="Top"
+              Background="#3E2723" Foreground="White"
+              FontFamily="Segoe UI" FontSize="13">
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-            <StackPanel>
+            <MenuItem Header="_Fișier" Foreground="White">
+                <MenuItem x:Name="MnuSalveazaParfumuri" Header="Salvează parfumuri"  Click="MnuSalveazaParfumuri_Click"/>
+                <MenuItem x:Name="MnuIncarcaParfumuri"  Header="Încarcă parfumuri"   Click="MnuIncarcaParfumuri_Click"/>
+                <Separator/>
+                <MenuItem x:Name="MnuSalveazaClienti"   Header="Salvează clienți"    Click="MnuSalveazaClienti_Click"/>
+                <MenuItem x:Name="MnuIncarcaClienti"    Header="Încarcă clienți"     Click="MnuIncarcaClienti_Click"/>
+                <Separator/>
+                <MenuItem x:Name="MnuIesire"            Header="Ieșire"              Click="MnuIesire_Click"/>
+            </MenuItem>
 
-                <StackPanel Margin="0,0,0,10">
-                    <Label x:Name="LblId" Content="_ID Parfum"
-                           Target="{Binding ElementName=TxtId}"/>
-                    <TextBox x:Name="TxtId"/>
-                    <TextBlock x:Name="ErrId"
-                               Style="{StaticResource StilEroare}"
-                               Text="ID-ul nu poate fi gol."/>
+            <MenuItem Header="_Vizualizare" Foreground="White">
+                <MenuItem x:Name="MnuVizParfumuri"  Header="Parfumuri"          Click="MnuVizParfumuri_Click"/>
+                <MenuItem x:Name="MnuVizClienti"    Header="Clienți"            Click="MnuVizClienti_Click"/>
+                <MenuItem x:Name="MnuVizModificare" Header="Modificare Parfum"  Click="MnuVizModificare_Click"/>
+            </MenuItem>
+
+            <MenuItem Header="_Ajutor" Foreground="White">
+                <MenuItem x:Name="MnuDespre" Header="Despre EssenceFlow" Click="MnuDespre_Click"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- HEADER  -->
+        <Border DockPanel.Dock="Top" Background="#FF4A4747" Padding="20,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                    <TextBlock Text="🌸 EssenceFlow"
+                               FontFamily="Georgia" FontSize="22" FontStyle="Italic"
+                               Foreground="White"/>
+                    <TextBlock Text="Sistem de management parfumuri"
+                               FontFamily="Segoe UI" FontSize="11"
+                               Foreground="#D7CCC8"/>
                 </StackPanel>
-
-                <StackPanel Margin="0,0,0,10">
-                    <Label x:Name="LblNume" Content="_Nume Parfum"
-                           Target="{Binding ElementName=TxtNume}"/>
-                    <TextBox x:Name="TxtNume"/>
-                    <TextBlock x:Name="ErrNume"
-                               Style="{StaticResource StilEroare}"
-                               Text="Numele nu poate fi gol și trebuie să aibă max. 50 de caractere."/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBox x:Name="TxtCautareRapida"
+                             Width="200" Height="30"
+                             VerticalContentAlignment="Center"
+                             Padding="8,0"
+                             FontFamily="Segoe UI" FontSize="12"
+                             BorderThickness="1" BorderBrush="#D7CCC8"/>
+                    <Button Content="🔍 Caută"
+                            Style="{StaticResource BtnMic}"
+                            Margin="6,0,0,0"
+                            Click="BtnCautareRapida_Click"/>
                 </StackPanel>
+            </Grid>
+        </Border>
 
-                <StackPanel Margin="0,0,0,10">
-                    <Label x:Name="LblBrand" Content="_Brand"
-                           Target="{Binding ElementName=TxtBrand}"/>
-                    <TextBox x:Name="TxtBrand"/>
-                    <TextBlock x:Name="ErrBrand"
-                               Style="{StaticResource StilEroare}"
-                               Text="Brandul nu poate fi gol și trebuie să aibă max. 30 de caractere."/>
-                </StackPanel>
+        <!--  STATUS BAR  -->
+        <StatusBar DockPanel.Dock="Bottom" Background="#EFEBE9">
+            <StatusBarItem>
+                <TextBlock x:Name="TxtStatus"
+                           FontFamily="Segoe UI" FontSize="11"
+                           Foreground="{StaticResource SubtleBrush}"
+                           Text="Gata."/>
+            </StatusBarItem>
+        </StatusBar>
 
-                <Grid Margin="0,0,0,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <Label x:Name="LblConcentratie" Content="_Concentrație"/>
-                        <ComboBox x:Name="CmbConcentratie">
-                            <ComboBoxItem Content="EDP"    Tag="0"/>
-                            <ComboBoxItem Content="EDT"    Tag="1"/>
-                            <ComboBoxItem Content="EDC"    Tag="2"/>
-                            <ComboBoxItem Content="Parfum" Tag="3"/>
-                        </ComboBox>
-                        <TextBlock x:Name="ErrConcentratie"
-                                   Style="{StaticResource StilEroare}"
-                                   Text="Selectați o concentrație."/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="2">
-                        <Label x:Name="LblCantitate" Content="Cantitate (_ml)"
-                               Target="{Binding ElementName=TxtCantitate}"/>
-                        <TextBox x:Name="TxtCantitate"/>
-                        <TextBlock x:Name="ErrCantitate"
-                                   Style="{StaticResource StilEroare}"
-                                   Text="Cantitate invalidă (1–1000 ml)."/>
-                    </StackPanel>
-                </Grid>
-
-                <Grid Margin="0,0,0,10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Grid.Column="0">
-                        <Label x:Name="LblStoc" Content="_Stoc (buc)"
-                               Target="{Binding ElementName=TxtStoc}"/>
-                        <TextBox x:Name="TxtStoc"/>
-                        <TextBlock x:Name="ErrStoc"
-                                   Style="{StaticResource StilEroare}"
-                                   Text="Stoc invalid (0–9999)."/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Column="2">
-                        <Label x:Name="LblPret" Content="_Preț (RON)"
-                               Target="{Binding ElementName=TxtPret}"/>
-                        <TextBox x:Name="TxtPret"/>
-                        <TextBlock x:Name="ErrPret"
-                                   Style="{StaticResource StilEroare}"
-                                   Text="Preț invalid (0.01–99999 RON)."/>
-                    </StackPanel>
-                </Grid>
-
-                <StackPanel Margin="0,0,0,10">
-                    <Label x:Name="LblSezon" Content="_Sezon Recomandat"/>
-                    <ComboBox x:Name="CmbSezon">
-                        <ComboBoxItem Content="Primavara" Tag="Primavara"/>
-                        <ComboBoxItem Content="Vara"      Tag="Vara"/>
-                        <ComboBoxItem Content="Toamna"    Tag="Toamna"/>
-                        <ComboBoxItem Content="Iarna"     Tag="Iarna"/>
-                        <ComboBoxItem Content="Universal" Tag="Universal"/>
-                    </ComboBox>
-                    <TextBlock x:Name="ErrSezon"
-                               Style="{StaticResource StilEroare}"
-                               Text="Selectați un sezon."/>
-                </StackPanel>
-
-                <TextBlock x:Name="TxtMesajSucces"
-                           FontFamily="Segoe UI"
-                           FontSize="13"
-                           FontWeight="SemiBold"
-                           HorizontalAlignment="Center"
-                           Margin="0,6,0,0"
-                           Visibility="Collapsed"
-                           TextWrapping="Wrap"/>
-
-            </StackPanel>
-        </ScrollViewer>
-
-        <Grid Grid.Row="2" Margin="0,16,0,0">
+        <!-- Principal-->
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="12"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="160" MinWidth="120"/>
+                <ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="*" MinWidth="400"/>
             </Grid.ColumnDefinitions>
 
-            <Button x:Name="BtnReset"
-                    Grid.Column="0"
-                    Content="_Reset"
-                    Height="40"
-                    FontFamily="Segoe UI"
-                    FontSize="13"
-                    FontWeight="SemiBold"
-                    Background="#EFEBE9"
-                    Foreground="{StaticResource CuloareAccent}"
-                    BorderBrush="{StaticResource CuloareAccent}"
-                    BorderThickness="1"
-                    Click="BtnReset_Click"/>
+            <!-- Bara laterala -->
+            <Border Grid.Column="0" Background="#FF4A4747">
+                <StackPanel Margin="0,10,0,0">
+                    <TextBlock Text="NAVIGARE"
+                               FontFamily="Segoe UI" FontSize="10" FontWeight="Bold"
+                               Foreground="#BCAAA4" Margin="14,0,0,8"/>
 
-            <Button x:Name="BtnAdauga"
-                    Grid.Column="2"
-                    Content="_Adaugă"
-                    Height="40"
-                    FontFamily="Segoe UI"
-                    FontSize="13"
-                    FontWeight="SemiBold"
-                    Background="{StaticResource CuloareAccent}"
-                    Foreground="{StaticResource CuloareBtnText}"
-                    BorderThickness="0"
-                    Click="BtnAdauga_Click"/>
+                    <Button x:Name="BtnNavParfumuri"
+                            Content="🌹 Parfumuri"
+                            Click="BtnNavParfumuri_Click"
+                            Height="40" BorderThickness="0"
+                            Background="#FF4A4747" Foreground="White"
+                            FontFamily="Segoe UI" FontSize="13"
+                            HorizontalContentAlignment="Left" Padding="14,0"
+                            Margin="0,1,0,1"/>
+
+                    <Button x:Name="BtnNavClienti"
+                            Content="👤 Clienți"
+                            Click="BtnNavClienti_Click"
+                            Height="40" BorderThickness="0"
+                            Background="Transparent" Foreground="#D7CCC8"
+                            FontFamily="Segoe UI" FontSize="13"
+                            HorizontalContentAlignment="Left" Padding="14,0"
+                            Margin="0,1,0,1"/>
+
+                    <Button x:Name="BtnNavCautare"
+                            Content="🔍 Căutare"
+                            Click="BtnNavCautare_Click"
+                            Height="40" BorderThickness="0"
+                            Background="Transparent" Foreground="#D7CCC8"
+                            FontFamily="Segoe UI" FontSize="13"
+                            HorizontalContentAlignment="Left" Padding="14,0"
+                            Margin="0,1,0,1"/>
+
+                    <!-- Buton navigare Modificare - adaugat pentru tema acasa Lab 9 -->
+                    <Button x:Name="BtnNavModificare"
+                            Content="✏ Modificare"
+                            Click="BtnNavModificare_Click"
+                            Height="40" BorderThickness="0"
+                            Background="Transparent" Foreground="#D7CCC8"
+                            FontFamily="Segoe UI" FontSize="13"
+                            HorizontalContentAlignment="Left" Padding="14,0"
+                            Margin="0,1,0,1"/>
+                </StackPanel>
+            </Border>
+
+            <GridSplitter Grid.Column="1"
+                          Width="4" HorizontalAlignment="Stretch"
+                          Background="#D7CCC8" ResizeBehavior="PreviousAndNext"/>
+
+            <TabControl x:Name="TabPrincipal"
+                        Grid.Column="2"
+                        TabStripPlacement="Top"
+                        BorderThickness="0"
+                        Background="#F7F3EF">
+
+                <!-- TAB 1: PARFUMURI -->
+                <TabItem x:Name="TabParfumuri" Header="🌹 Parfumuri" Visibility="Collapsed">
+                    <Grid Margin="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Adaugă / Editează Parfum"
+                                   Style="{StaticResource SectiuneTitlu}"
+                                   FontSize="16" Margin="0,0,0,10"/>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Date de bază" Style="{StaticResource SectiuneTitlu}"/>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel Grid.Column="0" Margin="0,0,0,8">
+                                                <Label x:Name="LblId" Content="_ID Parfum" Target="{Binding ElementName=TxtId}"/>
+                                                <TextBox x:Name="TxtId"/>
+                                                <TextBlock x:Name="ErrId" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ ID-ul nu poate fi gol."/>
+                                            </StackPanel>
+
+                                            <StackPanel Grid.Column="2" Margin="0,0,0,8">
+                                                <Label x:Name="LblBrand" Content="_Brand" Target="{Binding ElementName=TxtBrand}"/>
+                                                <TextBox x:Name="TxtBrand"/>
+                                                <TextBlock x:Name="ErrBrand" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Brand gol sau prea lung (max 30)."/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Margin="0,0,0,8">
+                                            <Label x:Name="LblNume" Content="_Nume Parfum" Target="{Binding ElementName=TxtNume}"/>
+                                            <TextBox x:Name="TxtNume"/>
+                                            <TextBlock x:Name="ErrNume" Style="{StaticResource StilEroare}"
+                                                       Text="⚠ Numele nu poate fi gol (max 50 caractere)."/>
+                                        </StackPanel>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0" Margin="0,0,0,8">
+                                                <Label x:Name="LblCantitate" Content="Cantitate (_ml)" Target="{Binding ElementName=TxtCantitate}"/>
+                                                <TextBox x:Name="TxtCantitate"/>
+                                                <TextBlock x:Name="ErrCantitate" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Cantitate invalidă (1–1000 ml)."/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2" Margin="0,0,0,8">
+                                                <Label x:Name="LblStoc" Content="_Stoc (buc)" Target="{Binding ElementName=TxtStoc}"/>
+                                                <TextBox x:Name="TxtStoc"/>
+                                                <TextBlock x:Name="ErrStoc" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Stoc invalid (0–9999)."/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Margin="0,0,0,0">
+                                            <Label x:Name="LblPret" Content="_Preț (RON)" Target="{Binding ElementName=TxtPret}"/>
+                                            <TextBox x:Name="TxtPret" Width="200" HorizontalAlignment="Left"/>
+                                            <TextBlock x:Name="ErrPret" Style="{StaticResource StilEroare}"
+                                                       Text="⚠ Preț invalid (0.01–99999 RON)."/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Concentratie RadioButton  -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Concentrație" Style="{StaticResource SectiuneTitlu}"/>
+                                        <WrapPanel x:Name="PnlConcentratie">
+                                            <RadioButton x:Name="RbEDP"    Content="EDP (Eau de Parfum)"   GroupName="Concentratie" IsChecked="True"/>
+                                            <RadioButton x:Name="RbEDT"    Content="EDT (Eau de Toilette)" GroupName="Concentratie"/>
+                                            <RadioButton x:Name="RbEDC"    Content="EDC (Eau de Cologne)"  GroupName="Concentratie"/>
+                                            <RadioButton x:Name="RbParfum" Content="Parfum pur"             GroupName="Concentratie"/>
+                                        </WrapPanel>
+                                        <TextBlock x:Name="ErrConcentratie" Style="{StaticResource StilEroare}"
+                                                   Text="⚠ Selectați o concentrație."/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Sezon recomandat RadioButton  -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Sezon Recomandat" Style="{StaticResource SectiuneTitlu}"/>
+                                        <WrapPanel>
+                                            <RadioButton x:Name="RbPrimavara" Content="🌸 Primăvară" GroupName="Sezon"/>
+                                            <RadioButton x:Name="RbVara"      Content="☀ Vară"       GroupName="Sezon"/>
+                                            <RadioButton x:Name="RbToamna"    Content="🍂 Toamnă"    GroupName="Sezon"/>
+                                            <RadioButton x:Name="RbIarna"     Content="❄ Iarnă"      GroupName="Sezon"/>
+                                            <RadioButton x:Name="RbUniversal" Content="🌍 Universal"  GroupName="Sezon" IsChecked="True"/>
+                                        </WrapPanel>
+                                        <TextBlock x:Name="ErrSezon" Style="{StaticResource StilEroare}"
+                                                   Text="⚠ Selectați un sezon."/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Ocazii potrivite CheckBox  -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Ocazii Potrivite" Style="{StaticResource SectiuneTitlu}"/>
+                                        <WrapPanel>
+                                            <CheckBox x:Name="ChkCasual"     Content="👕 Casual"/>
+                                            <CheckBox x:Name="ChkBusiness"   Content="💼 Business"/>
+                                            <CheckBox x:Name="ChkSeara"      Content="🌙 Seară"/>
+                                            <CheckBox x:Name="ChkEveniment"  Content="🎉 Eveniment"/>
+                                            <CheckBox x:Name="ChkSport"      Content="🏃 Sport"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Mesaj feedback -->
+                                <TextBlock x:Name="TxtMesajSucces"
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" Margin="0,4,0,0"
+                                           Visibility="Collapsed" TextWrapping="Wrap"/>
+
+                                <!-- Butoane act -->
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Content="🗑 Șterge"
+                                            Style="{StaticResource BtnSecundar}"
+                                            Click="BtnGoleste_Click"/>
+                                    <Button Grid.Column="2" Content="📋 Ultimul adăugat"
+                                            Style="{StaticResource BtnSecundar}"
+                                            Click="BtnReset_Click"/>
+                                    <Button Grid.Column="4" Content="✔ Adaugă Parfum"
+                                            Style="{StaticResource BtnPrimar}"
+                                            Click="BtnAdauga_Click"/>
+                                </Grid>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+
+                <!-- TAB 2: CLIENTI -->
+                <TabItem x:Name="TabClienti" Header="👤 Clienți" Visibility="Collapsed">
+                    <Grid Margin="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Adaugă Client"
+                                   Style="{StaticResource SectiuneTitlu}"
+                                   FontSize="16" Margin="0,0,0,10"/>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Date client" Style="{StaticResource SectiuneTitlu}"/>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <Label x:Name="LblClientId" Content="_ID Client"/>
+                                                <TextBox x:Name="TxtClientId"/>
+                                                <TextBlock x:Name="ErrClientId" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ ID-ul nu poate fi gol."/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <Label x:Name="LblClientNume" Content="_Nume"/>
+                                                <TextBox x:Name="TxtClientNume"/>
+                                                <TextBlock x:Name="ErrClientNume" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Numele nu poate fi gol."/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <Label x:Name="LblClientTelefon" Content="_Telefon"/>
+                                                <TextBox x:Name="TxtClientTelefon"/>
+                                                <TextBlock x:Name="ErrClientTelefon" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Telefonul nu poate fi gol."/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <Label x:Name="LblClientEmail" Content="_Email"/>
+                                                <TextBox x:Name="TxtClientEmail"/>
+                                                <TextBlock x:Name="ErrClientEmail" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Email invalid."/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Margin="0,0,0,8">
+                                            <Label x:Name="LblClientPuncte" Content="Puncte _Loialitate"/>
+                                            <TextBox x:Name="TxtClientPuncte" Width="160" HorizontalAlignment="Left" Text="0"/>
+                                            <TextBlock x:Name="ErrClientPuncte" Style="{StaticResource StilEroare}"
+                                                       Text="⚠ Valoare invalidă pentru puncte."/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Preferinte client CheckBox -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Preferințe Client" Style="{StaticResource SectiuneTitlu}"/>
+                                        <Label Content="Tipuri parfumuri preferate:" Margin="0,0,0,4"/>
+                                        <WrapPanel>
+                                            <CheckBox x:Name="ChkPrefEDP"    Content="EDP"/>
+                                            <CheckBox x:Name="ChkPrefEDT"    Content="EDT"/>
+                                            <CheckBox x:Name="ChkPrefFloral" Content="🌸 Floral"/>
+                                            <CheckBox x:Name="ChkPrefLemn"   Content="🌲 Lemnos"/>
+                                            <CheckBox x:Name="ChkPrefFruct"  Content="🍊 Fructat"/>
+                                            <CheckBox x:Name="ChkPrefOri"    Content="🕌 Oriental"/>
+                                        </WrapPanel>
+                                        <Label Content="Contact preferat:" Margin="0,8,0,4"/>
+                                        <WrapPanel>
+                                            <RadioButton x:Name="RbContactEmail"   Content="📧 Email"   GroupName="Contact" IsChecked="True"/>
+                                            <RadioButton x:Name="RbContactTel"     Content="📞 Telefon" GroupName="Contact"/>
+                                            <RadioButton x:Name="RbContactNiciun"  Content="❌ Niciunul" GroupName="Contact"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Mesaj client -->
+                                <TextBlock x:Name="TxtMesajClient"
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" Margin="0,4,0,0"
+                                           Visibility="Collapsed" TextWrapping="Wrap"/>
+
+                                <!-- Butoane client -->
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Content="🗑 Golește"
+                                            Style="{StaticResource BtnSecundar}"
+                                            Click="BtnGolesteClient_Click"/>
+                                    <Button Grid.Column="2" Content="✔ Adaugă Client"
+                                            Style="{StaticResource BtnPrimar}"
+                                            Click="BtnAdaugaClient_Click"/>
+                                </Grid>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+
+                <!-- TAB 3: CĂUTARE -->
+                <TabItem x:Name="TabCautare" Header="🔍 Căutare" Visibility="Collapsed">
+                    <Grid Margin="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Căutare Avansată"
+                                   Style="{StaticResource SectiuneTitlu}"
+                                   FontSize="16" Margin="0,0,0,10"/>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Caută Parfumuri" Style="{StaticResource SectiuneTitlu}"/>
+                                        <Label Content="Caută după:"/>
+                                        <WrapPanel Margin="0,0,0,8">
+                                            <RadioButton x:Name="RbCautBrand"    Content="Brand"      GroupName="CautParfum" IsChecked="True"/>
+                                            <RadioButton x:Name="RbCautNume"     Content="Nume"       GroupName="CautParfum"/>
+                                            <RadioButton x:Name="RbCautPretMax"  Content="Preț maxim" GroupName="CautParfum"/>
+                                        </WrapPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="8"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="TxtCautareParfum" Grid.Column="0" FontFamily="Segoe UI" FontSize="13"/>
+                                            <Button Grid.Column="2" Content="Caută"
+                                                    Style="{StaticResource BtnMic}"
+                                                    Click="BtnCautaParfum_Click"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Rezultate Parfumuri" Style="{StaticResource SectiuneTitlu}"/>
+                                        <ListBox x:Name="LstRezultateParfumuri"
+                                                 MinHeight="100" MaxHeight="200"
+                                                 FontFamily="Segoe UI" FontSize="12"
+                                                 BorderBrush="{StaticResource BorderBrush}"
+                                                 BorderThickness="1"
+                                                 Background="White"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Caută Clienți" Style="{StaticResource SectiuneTitlu}"/>
+                                        <Label Content="Caută după:"/>
+                                        <WrapPanel Margin="0,0,0,8">
+                                            <RadioButton x:Name="RbCautClientNume"    Content="Nume"    GroupName="CautClient" IsChecked="True"/>
+                                            <RadioButton x:Name="RbCautClientTelefon" Content="Telefon" GroupName="CautClient"/>
+                                        </WrapPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="8"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBox x:Name="TxtCautareClient" Grid.Column="0" FontFamily="Segoe UI" FontSize="13"/>
+                                            <Button Grid.Column="2" Content="Caută"
+                                                    Style="{StaticResource BtnMic}"
+                                                    Click="BtnCautaClient_Click"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Rezultate Clienți" Style="{StaticResource SectiuneTitlu}"/>
+                                        <ListBox x:Name="LstRezultateClienti"
+                                                 MinHeight="80" MaxHeight="160"
+                                                 FontFamily="Segoe UI" FontSize="12"
+                                                 BorderBrush="{StaticResource BorderBrush}"
+                                                 BorderThickness="1"
+                                                 Background="White"/>
+                                    </StackPanel>
+                                </Border>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+
+                <!--
+                     TAB 4: MODIFICARE PARFUM
+                     Adaugat pentru tema acasa - Lab 9
+                     Foloseste: ComboBox (selectie parfum), ListBox (selectie ocazii),
+                                DatePicker (data actualizare manuala optionala)
+                -->
+                <TabItem x:Name="TabModificare" Header="✏ Modificare" Visibility="Collapsed">
+                    <Grid Margin="16">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Modificare Parfum"
+                                   Style="{StaticResource SectiuneTitlu}"
+                                   FontSize="16" Margin="0,0,0,10"/>
+
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                            <StackPanel>
+
+                                <!-- Card: Selectie parfum prin ComboBox -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Selectează Parfumul de Modificat" Style="{StaticResource SectiuneTitlu}"/>
+                                        <Label Content="Parfum:"/>
+                                        <!-- ComboBox cu DisplayMemberPath pe Nume - afiseaza lista de parfumuri -->
+                                        <ComboBox x:Name="CmbParfumDeModificat"
+                                                  DisplayMemberPath="Nume"
+                                                  SelectionChanged="CmbParfumDeModificat_SelectionChanged"
+                                                  Margin="0,0,0,4"/>
+                                        <TextBlock x:Name="TxtInfoParfumSelectat"
+                                                   FontFamily="Segoe UI" FontSize="11"
+                                                   Foreground="{StaticResource SubtleBrush}"
+                                                   TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Date de baza modificabile -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Date de Bază" Style="{StaticResource SectiuneTitlu}"/>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <Label x:Name="LblModNume" Content="Nume Parfum"/>
+                                                <TextBox x:Name="TxtModNume"/>
+                                                <TextBlock x:Name="ErrModNume" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Numele nu poate fi gol."/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <Label x:Name="LblModBrand" Content="Brand"/>
+                                                <TextBox x:Name="TxtModBrand"/>
+                                                <TextBlock x:Name="ErrModBrand" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Brandul nu poate fi gol."/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="16"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <Label x:Name="LblModCantitate" Content="Cantitate (ml)"/>
+                                                <TextBox x:Name="TxtModCantitate"/>
+                                                <TextBlock x:Name="ErrModCantitate" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Cantitate invalidă (1–1000)."/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="2">
+                                                <Label x:Name="LblModStoc" Content="Stoc (buc)"/>
+                                                <TextBox x:Name="TxtModStoc"/>
+                                                <TextBlock x:Name="ErrModStoc" Style="{StaticResource StilEroare}"
+                                                           Text="⚠ Stoc invalid (0–9999)."/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <StackPanel Margin="0,0,0,0">
+                                            <Label x:Name="LblModPret" Content="Preț (RON)"/>
+                                            <TextBox x:Name="TxtModPret" Width="200" HorizontalAlignment="Left"/>
+                                            <TextBlock x:Name="ErrModPret" Style="{StaticResource StilEroare}"
+                                                       Text="⚠ Preț invalid (0.01–99999)."/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Concentratie RadioButton -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Concentrație" Style="{StaticResource SectiuneTitlu}"/>
+                                        <WrapPanel>
+                                            <RadioButton x:Name="RbModEDP"    Content="EDP" GroupName="ModConcentratie" IsChecked="True"/>
+                                            <RadioButton x:Name="RbModEDT"    Content="EDT" GroupName="ModConcentratie"/>
+                                            <RadioButton x:Name="RbModEDC"    Content="EDC" GroupName="ModConcentratie"/>
+                                            <RadioButton x:Name="RbModParfum" Content="Parfum pur" GroupName="ModConcentratie"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Card: Sezon RadioButton -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Sezon Recomandat" Style="{StaticResource SectiuneTitlu}"/>
+                                        <WrapPanel>
+                                            <RadioButton x:Name="RbModPrimavara" Content="🌸 Primăvară" GroupName="ModSezon"/>
+                                            <RadioButton x:Name="RbModVara"      Content="☀ Vară"       GroupName="ModSezon"/>
+                                            <RadioButton x:Name="RbModToamna"    Content="🍂 Toamnă"    GroupName="ModSezon"/>
+                                            <RadioButton x:Name="RbModIarna"     Content="❄ Iarnă"      GroupName="ModSezon"/>
+                                            <RadioButton x:Name="RbModUniversal" Content="🌍 Universal"  GroupName="ModSezon" IsChecked="True"/>
+                                        </WrapPanel>
+                                    </StackPanel>
+                                </Border>
+
+                                <!--
+                                     Card: Ocazii potrivite prin ListBox cu selectie multipla
+                                     Demonstreaza folosirea ListBox cu SelectionMode=Multiple
+                                -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Ocazii Potrivite (selectie multipla)" Style="{StaticResource SectiuneTitlu}"/>
+                                        <TextBlock Text="Tine apasata tasta Ctrl pentru a selecta mai multe optiuni."
+                                                   FontFamily="Segoe UI" FontSize="11"
+                                                   Foreground="{StaticResource SubtleBrush}"
+                                                   Margin="0,0,0,6"/>
+                                        <ListBox x:Name="LstModOcazii"
+                                                 SelectionMode="Multiple"
+                                                 Height="110"
+                                                 FontFamily="Segoe UI" FontSize="12"
+                                                 BorderBrush="{StaticResource BorderBrush}"
+                                                 BorderThickness="1"
+                                                 Background="White"
+                                                 SelectionChanged="LstModOcazii_SelectionChanged">
+                                            <ListBoxItem Content="👕 Casual"    Tag="Casual"/>
+                                            <ListBoxItem Content="💼 Business"  Tag="Business"/>
+                                            <ListBoxItem Content="🌙 Seară"     Tag="Seara"/>
+                                            <ListBoxItem Content="🎉 Eveniment" Tag="Eveniment"/>
+                                            <ListBoxItem Content="🏃 Sport"     Tag="Sport"/>
+                                        </ListBox>
+                                        <TextBlock x:Name="TxtOcaziiSelectate"
+                                                   FontFamily="Segoe UI" FontSize="11"
+                                                   Foreground="{StaticResource SubtleBrush}"
+                                                   Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!--
+                                     Card: DatePicker pentru data actualizare
+                                     Demonstreaza folosirea controlului DatePicker
+                                     Implicit se seteaza data curenta la salvare, dar
+                                     utilizatorul poate alege o data diferita daca doreste
+                                -->
+                                <Border Style="{StaticResource CardPanel}">
+                                    <StackPanel>
+                                        <TextBlock Text="Data Actualizare" Style="{StaticResource SectiuneTitlu}"/>
+                                        <TextBlock Text="Implicit se foloseste data de azi. Puteti alege alta data daca e necesar."
+                                                   FontFamily="Segoe UI" FontSize="11"
+                                                   Foreground="{StaticResource SubtleBrush}"
+                                                   Margin="0,0,0,6" TextWrapping="Wrap"/>
+                                        <DatePicker x:Name="DtpDataActualizare"
+                                                    SelectedDateFormat="Short"
+                                                    Width="200"
+                                                    HorizontalAlignment="Left"
+                                                    SelectedDateChanged="DtpDataActualizare_SelectedDateChanged"/>
+                                        <TextBlock x:Name="TxtDataActualizareInfo"
+                                                   FontFamily="Segoe UI" FontSize="11"
+                                                   Foreground="{StaticResource SubtleBrush}"
+                                                   Margin="0,4,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Mesaj rezultat modificare -->
+                                <TextBlock x:Name="TxtMesajModificare"
+                                           FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                                           HorizontalAlignment="Center" Margin="0,4,0,0"
+                                           Visibility="Collapsed" TextWrapping="Wrap"/>
+
+                                <!-- Butoane -->
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Button Grid.Column="0" Content="↩ Resetează"
+                                            Style="{StaticResource BtnSecundar}"
+                                            Click="BtnResetModificare_Click"/>
+                                    <Button Grid.Column="2" Content="💾 Salvează Modificările"
+                                            Style="{StaticResource BtnPrimar}"
+                                            Click="BtnSalveazaModificari_Click"/>
+                                </Grid>
+
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </TabItem>
+
+            </TabControl>
         </Grid>
 
-    </Grid>
+    </DockPanel>
 </Window>
+
