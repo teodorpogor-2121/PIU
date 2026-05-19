@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -9,9 +11,9 @@ using DataAccess;
 
 namespace EssenceFlow
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        //  Constante validare 
+        
         private const int MAX_LUNGIME_NUME = 50;
         private const int MAX_LUNGIME_BRAND = 30;
         private const int MIN_CANTITATE_ML = 1;
@@ -21,21 +23,37 @@ namespace EssenceFlow
         private const decimal MIN_PRET = 0.01m;
         private const decimal MAX_PRET = 99999m;
 
-        //  Culori validare 
+        
         private static readonly SolidColorBrush CuloareLabelNormal = new SolidColorBrush(Color.FromRgb(0x3E, 0x27, 0x23));
         private static readonly SolidColorBrush CuloareLabelEroare = new SolidColorBrush(Color.FromRgb(0xC0, 0x39, 0x2B));
         private static readonly SolidColorBrush CuloareBorduraNorm = new SolidColorBrush(Color.FromRgb(0xD7, 0xCC, 0xC8));
         private static readonly SolidColorBrush CuloareBorduraErr = new SolidColorBrush(Color.FromRgb(0xC0, 0x39, 0x2B));
 
-        //  Date aplicatie 
+        
         private Parfum _ultimulParfumAdaugat = null;
         private readonly AdminParfumuri _adminParfumuri = new AdminParfumuri();
         private readonly AdminClienti _adminClienti = new AdminClienti();
 
+        //CRUD
+        private ObservableCollection<Client> _clientiView = new ObservableCollection<Client>();
+        private Client _clientSelectatGestiune = null;
+        private bool _modAdaugare = false;
+
+        //BINDING
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void Notify(string prop) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+
+        private int _numarClienti = 0;
+        public int NumarClienti
+        {
+            get => _numarClienti;
+            set { _numarClienti = value; Notify(nameof(NumarClienti)); }
+        }
+
+        
         public MainWindow()
         {
             InitializeComponent();
-            //  tab-ul Parfumuri
             NavigheazaCatre(TabParfumuri, BtnNavParfumuri);
             SetStatus("Aplicație pornită. Gata.");
         }
@@ -53,13 +71,16 @@ namespace EssenceFlow
         private void BtnNavCautare_Click(object sender, RoutedEventArgs e)
             => NavigheazaCatre(TabCautare, BtnNavCautare);
 
+        private void BtnNavGestiune_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshListaGestiune();
+            NavigheazaCatre(TabGestiune, BtnNavGestiune);
+        }
+
         private void NavigheazaCatre(TabItem tab, Button butonActiv)
         {
-            // Selectăm tab-ul dorit
             TabPrincipal.SelectedItem = tab;
-
-            // Reset stiluri butoane navigare
-            foreach (Button b in new[] { BtnNavParfumuri, BtnNavClienti, BtnNavCautare })
+            foreach (Button b in new[] { BtnNavParfumuri, BtnNavClienti, BtnNavCautare, BtnNavGestiune })
             {
                 b.Background = new SolidColorBrush(Colors.Transparent);
                 b.Foreground = new SolidColorBrush(Color.FromRgb(0xD7, 0xCC, 0xC8));
@@ -115,36 +136,32 @@ namespace EssenceFlow
                 "Despre EssenceFlow", MessageBoxButton.OK, MessageBoxImage.Information);
 
         
-        //  TAB PARFUMURI adaugat
+        //  TAB PARFUMURI – Adaugare
         
 
         private void BtnAdauga_Click(object sender, RoutedEventArgs e)
         {
             TxtMesajSucces.Visibility = Visibility.Collapsed;
-
             if (ValideazaParfum() > 0) return;
 
-            // Citire concentrație din RadioButton 
             Concentratie concentratie = Concentratie.EDP;
             if (RbEDT.IsChecked == true) concentratie = Concentratie.EDT;
             else if (RbEDC.IsChecked == true) concentratie = Concentratie.EDC;
             else if (RbParfum.IsChecked == true) concentratie = Concentratie.Parfum;
 
-            // Citire sezon din RadioButton 
             Sezon sezon = Sezon.Universal;
             if (RbPrimavara.IsChecked == true) sezon = Sezon.Primavara;
             else if (RbVara.IsChecked == true) sezon = Sezon.Vara;
             else if (RbToamna.IsChecked == true) sezon = Sezon.Toamna;
             else if (RbIarna.IsChecked == true) sezon = Sezon.Iarna;
 
-            // Citire ocazii din CheckBox 
             Ocazie ocazii = Ocazie.Niciuna;
             if (ChkCasual.IsChecked == true) ocazii |= Ocazie.Casual;
             if (ChkBusiness.IsChecked == true) ocazii |= Ocazie.Business;
             if (ChkSeara.IsChecked == true) ocazii |= Ocazie.Seara;
             if (ChkEveniment.IsChecked == true) ocazii |= Ocazie.Eveniment;
             if (ChkSport.IsChecked == true) ocazii |= Ocazie.Sport;
-            if (ocazii == Ocazie.Niciuna) ocazii = Ocazie.Casual; // default
+            if (ocazii == Ocazie.Niciuna) ocazii = Ocazie.Casual;
 
             int.TryParse(TxtCantitate.Text, out int cantitate);
             int.TryParse(TxtStoc.Text, out int stoc);
@@ -158,9 +175,8 @@ namespace EssenceFlow
             _ultimulParfumAdaugat = parfum;
 
             AfiseazaMesaj(TxtMesajSucces,
-                $"✔ Parfumul \"{parfum.Nume}\" a fost adăugat cu succes!",
+                $" Parfumul \"{parfum.Nume}\" a fost adăugat cu succes!",
                 Color.FromRgb(0x2E, 0x7D, 0x32));
-
             SetStatus($"Parfum adăugat: {parfum.Nume} | Brand: {parfum.Brand} | Stoc: {parfum.Stoc}");
             GolesteFormularParfum();
         }
@@ -172,15 +188,12 @@ namespace EssenceFlow
                 AfiseazaMesaj(TxtMesajSucces, "Nu a fost adăugat niciun parfum încă.", Colors.Gray);
                 return;
             }
-
             var p = _ultimulParfumAdaugat;
-            string info =
-                $"📋 Ultimul adăugat:\n" +
-                $"  ID: {p.Id} | Nume: {p.Nume} | Brand: {p.Brand}\n" +
+            AfiseazaMesaj(TxtMesajSucces,
+                $" Ultimul adăugat:\n  ID: {p.Id} | Nume: {p.Nume} | Brand: {p.Brand}\n" +
                 $"  {p.Concentratie} | {p.CantitateMl}ml | Stoc: {p.Stoc} | {p.Pret} RON\n" +
-                $"  Sezon: {p.SezonRecomandat} | Ocazii: {p.OcaziiPotrivite}";
-
-            AfiseazaMesaj(TxtMesajSucces, info, Color.FromRgb(0x15, 0x65, 0xC0));
+                $"  Sezon: {p.SezonRecomandat} | Ocazii: {p.OcaziiPotrivite}",
+                Color.FromRgb(0x15, 0x65, 0xC0));
         }
 
         private void BtnGoleste_Click(object sender, RoutedEventArgs e)
@@ -190,13 +203,12 @@ namespace EssenceFlow
         }
 
         
-        //  TAB clienti adaugati
+        //  TAB CLIENTI – Adaugare
         
 
         private void BtnAdaugaClient_Click(object sender, RoutedEventArgs e)
         {
             TxtMesajClient.Visibility = Visibility.Collapsed;
-
             if (ValideazaClient() > 0) return;
 
             int.TryParse(TxtClientPuncte.Text, out int puncte);
@@ -210,13 +222,13 @@ namespace EssenceFlow
 
             if (!client.EsteValid())
             {
-                AfiseazaMesaj(TxtMesajClient, "⚠ Datele clientului nu sunt valide!", Colors.OrangeRed);
+                AfiseazaMesaj(TxtMesajClient, " Datele clientului nu sunt valide!", Colors.OrangeRed);
                 return;
             }
 
             _adminClienti.Adauga(client);
             AfiseazaMesaj(TxtMesajClient,
-                $"✔ Clientul \"{client.Nume}\" a fost adăugat!",
+                $" Clientul \"{client.Nume}\" a fost adăugat!",
                 Color.FromRgb(0x2E, 0x7D, 0x32));
             SetStatus($"Client adăugat: {client.Nume} | Tel: {client.Telefon}");
             GolesteFormularClient();
@@ -229,22 +241,17 @@ namespace EssenceFlow
         }
 
         
-        //  TAB search
+        //  TAB CAUTARE
         
 
-        
         private void BtnCautareRapida_Click(object sender, RoutedEventArgs e)
         {
             string termen = TxtCautareRapida.Text.Trim();
             if (string.IsNullOrWhiteSpace(termen)) return;
-
             NavigheazaCatre(TabCautare, BtnNavCautare);
-
-            
             TxtCautareParfum.Text = termen;
             RbCautBrand.IsChecked = true;
             EfectueazaCautareParfum(termen, "brand");
-
             TxtCautareClient.Text = termen;
             RbCautClientNume.IsChecked = true;
             EfectueazaCautareClient(termen, "nume");
@@ -253,16 +260,10 @@ namespace EssenceFlow
         private void BtnCautaParfum_Click(object sender, RoutedEventArgs e)
         {
             string termen = TxtCautareParfum.Text.Trim();
-            if (string.IsNullOrWhiteSpace(termen))
-            {
-                SetStatus("Introduceți un termen de căutare.");
-                return;
-            }
-
+            if (string.IsNullOrWhiteSpace(termen)) { SetStatus("Introduceți un termen de căutare."); return; }
             string criteriu = "brand";
             if (RbCautNume.IsChecked == true) criteriu = "nume";
             if (RbCautPretMax.IsChecked == true) criteriu = "pret";
-
             EfectueazaCautareParfum(termen, criteriu);
         }
 
@@ -270,7 +271,6 @@ namespace EssenceFlow
         {
             LstRezultateParfumuri.Items.Clear();
             List<Parfum> rezultate;
-
             switch (criteriu)
             {
                 case "nume":
@@ -280,40 +280,29 @@ namespace EssenceFlow
                     break;
                 case "pret":
                     if (!decimal.TryParse(termen, out decimal pretMax))
-                    {
-                        SetStatus("Introduceți o valoare numerică pentru preț.");
-                        return;
-                    }
+                    { SetStatus("Introduceți o valoare numerică pentru preț."); return; }
                     rezultate = _adminParfumuri.CautaDupaPretMaxim(pretMax);
                     break;
-                default: // brand
+                default:
                     rezultate = _adminParfumuri.CautaDupaBrand(termen);
                     break;
             }
-
             if (rezultate.Count == 0)
             {
                 LstRezultateParfumuri.Items.Add("— Niciun rezultat găsit —");
                 SetStatus($"Căutare parfumuri după {criteriu}: niciun rezultat.");
                 return;
             }
-
             foreach (var p in rezultate)
                 LstRezultateParfumuri.Items.Add(
                     $"{p.Nume}  |  {p.Brand}  |  {p.Concentratie}  |  {p.Pret} RON  |  Stoc: {p.Stoc}  |  {p.SezonRecomandat}");
-
-            SetStatus($"Găsite {rezultate.Count} parfumuri pentru \"{termen}\" (criteriu: {criteriu}).");
+            SetStatus($"Găsite {rezultate.Count} parfumuri pentru \"{termen}\".");
         }
 
         private void BtnCautaClient_Click(object sender, RoutedEventArgs e)
         {
             string termen = TxtCautareClient.Text.Trim();
-            if (string.IsNullOrWhiteSpace(termen))
-            {
-                SetStatus("Introduceți un termen de căutare client.");
-                return;
-            }
-
+            if (string.IsNullOrWhiteSpace(termen)) { SetStatus("Introduceți un termen de căutare client."); return; }
             string criteriu = RbCautClientTelefon.IsChecked == true ? "telefon" : "nume";
             EfectueazaCautareClient(termen, criteriu);
         }
@@ -322,7 +311,6 @@ namespace EssenceFlow
         {
             LstRezultateClienti.Items.Clear();
             List<Client> rezultate;
-
             if (criteriu == "telefon")
                 rezultate = _adminClienti.GetToate()
                     .Where(c => c.Telefon.Contains(termen))
@@ -336,22 +324,210 @@ namespace EssenceFlow
                 SetStatus($"Căutare clienți după {criteriu}: niciun rezultat.");
                 return;
             }
-
             foreach (var c in rezultate)
                 LstRezultateClienti.Items.Add(
                     $"{c.Nume}  |  {c.Telefon}  |  {c.Email}  |  Puncte: {c.PuncteLoialitate}");
-
-            SetStatus($"Găsiți {rezultate.Count} clienți pentru \"{termen}\" (criteriu: {criteriu}).");
+            SetStatus($"Găsiți {rezultate.Count} clienți pentru \"{termen}\".");
         }
 
         
-        //  VALIDARE PARFUM
+        //  TAB GESTIUNE CRUD BINDING
+        
+
+        //  Refresh lista BINDING  
+        private void RefreshListaGestiune(string filtru = "")
+        {
+            _clientiView.Clear();
+            var sursa = string.IsNullOrWhiteSpace(filtru)
+                ? _adminClienti.GetToate()
+                : _adminClienti.CautaDupaNume(filtru);
+            foreach (var c in sursa)
+                _clientiView.Add(c);
+
+            
+            LstClientiGestiune.ItemsSource = null;
+            LstClientiGestiune.ItemsSource = _clientiView;
+
+            
+            NumarClienti = _adminClienti.GetToate().Count;
+        }
+
+        private void TxtFiltruClienti_TextChanged(object sender, TextChangedEventArgs e)
+            => RefreshListaGestiune(TxtFiltruClienti.Text.Trim());
+
+        //  READ selectie in lista 
+        private void LstClientiGestiune_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LstClientiGestiune.SelectedItem is not Client c) return;
+            _clientSelectatGestiune = c;
+            _modAdaugare = false;
+
+            TxtGestClientId.Text = c.Id;
+            TxtGestClientNume.Text = c.Nume;
+            TxtGestClientTelefon.Text = c.Telefon;
+            TxtGestClientEmail.Text = c.Email;
+            TxtGestClientPuncte.Text = c.PuncteLoialitate.ToString();
+            DtpGestDataNasterii.SelectedDate = c.DataNasterii;
+
+            TxtGestDataActualizare.Text = $"Ultima actualizare: {c.DataActualizare:dd.MM.yyyy HH:mm}";
+            TxtGestDataActualizare.Visibility = Visibility.Visible;
+            TxtTitluFormular.Text = $"Editare: {c.Nume}";
+            TxtModCurent.Text = $" Editare client  (ID: {c.Id})";
+
+            AscundeEroariGestiune();
+            TxtMesajGestiune.Visibility = Visibility.Collapsed;
+        }
+
+        //  CREATE client nou 
+        private void BtnGestClientNou_Click(object sender, RoutedEventArgs e)
+        {
+            _clientSelectatGestiune = null;
+            _modAdaugare = true;
+            LstClientiGestiune.SelectedItem = null;
+
+            TxtGestClientId.IsReadOnly = false;
+            TxtGestClientId.Background = Brushes.White;
+            TxtGestClientId.Foreground = Brushes.Black;
+            TxtGestClientId.Text = string.Empty;
+            TxtGestClientNume.Text = string.Empty;
+            TxtGestClientTelefon.Text = string.Empty;
+            TxtGestClientEmail.Text = string.Empty;
+            TxtGestClientPuncte.Text = "0";
+            DtpGestDataNasterii.SelectedDate = null;
+
+            TxtGestDataActualizare.Visibility = Visibility.Collapsed;
+            TxtTitluFormular.Text = " Client Nou";
+            TxtModCurent.Text = " Adăugare client nou";
+            TxtMesajGestiune.Visibility = Visibility.Collapsed;
+            AscundeEroariGestiune();
+            TxtGestClientId.Focus();
+        }
+
+        //  CREATE  UPDATE salvare 
+        private void BtnGestSalveaza_Click(object sender, RoutedEventArgs e)
+        {
+            TxtMesajGestiune.Visibility = Visibility.Collapsed;
+            if (!ValideazaFormularGestiune()) return;
+
+            int.TryParse(TxtGestClientPuncte.Text, out int puncte);
+            DateTime dataNasterii = DtpGestDataNasterii.SelectedDate ?? DateTime.Today;
+
+            if (_modAdaugare)
+            {
+                // CREATE
+                string idNou = TxtGestClientId.Text.Trim();
+                if (_adminClienti.GetToate().Any(c => c.Id == idNou))
+                {
+                    AfiseazaMesaj(TxtMesajGestiune,
+                        " Există deja un client cu acest ID. Alegeți alt ID.", Colors.OrangeRed);
+                    return;
+                }
+
+                var clientNou = new Client(
+                    idNou,
+                    TxtGestClientNume.Text.Trim(),
+                    TxtGestClientTelefon.Text.Trim(),
+                    TxtGestClientEmail.Text.Trim(),
+                    puncte, dataNasterii);
+
+                _adminClienti.Adauga(clientNou);
+                AfiseazaMesaj(TxtMesajGestiune,
+                    $" Clientul \"{clientNou.Nume}\" a fost adăugat cu succes!",
+                    Color.FromRgb(0x2E, 0x7D, 0x32));
+                SetStatus($"Client nou adăugat: {clientNou.Nume}");
+
+                TxtGestClientId.IsReadOnly = true;
+                TxtGestClientId.Background = new SolidColorBrush(Color.FromRgb(0xF5, 0xF5, 0xF5));
+                TxtGestClientId.Foreground = Brushes.Gray;
+                _modAdaugare = false;
+            }
+            else
+            {
+                // UPDATE
+                if (_clientSelectatGestiune == null)
+                {
+                    AfiseazaMesaj(TxtMesajGestiune,
+                        " Selectați un client din listă sau apăsați 'Client Nou'.", Colors.OrangeRed);
+                    return;
+                }
+
+                bool ok = _adminClienti.ModificaClient(
+                    _clientSelectatGestiune.Id,
+                    TxtGestClientNume.Text.Trim(),
+                    TxtGestClientTelefon.Text.Trim(),
+                    TxtGestClientEmail.Text.Trim(),
+                    puncte, dataNasterii);
+
+                if (!ok) { AfiseazaMesaj(TxtMesajGestiune, " Clientul nu a fost găsit.", Colors.OrangeRed); return; }
+
+                AfiseazaMesaj(TxtMesajGestiune,
+                    $" Clientul \"{TxtGestClientNume.Text.Trim()}\" a fost actualizat! DataActualizare: {DateTime.Now:dd.MM.yyyy HH:mm}",
+                    Color.FromRgb(0x2E, 0x7D, 0x32));
+                SetStatus($"Client actualizat: {TxtGestClientNume.Text.Trim()}");
+                TxtGestDataActualizare.Text = $"Ultima actualizare: {DateTime.Now:dd.MM.yyyy HH:mm}";
+            }
+
+            RefreshListaGestiune(TxtFiltruClienti.Text.Trim());
+        }
+
+        // DELETE 
+        private void BtnGestSterge_Click(object sender, RoutedEventArgs e)
+        {
+            TxtMesajGestiune.Visibility = Visibility.Collapsed;
+            if (_clientSelectatGestiune == null)
+            {
+                AfiseazaMesaj(TxtMesajGestiune,
+                    " Selectați un client din listă pentru a-l șterge.", Colors.OrangeRed);
+                return;
+            }
+
+            var rez = MessageBox.Show(
+                $"Ești sigur că vrei să ștergi clientul \"{_clientSelectatGestiune.Nume}\"?\nAceastă acțiune nu poate fi anulată.",
+                "Confirmare ștergere", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+            if (rez != MessageBoxResult.Yes) return;
+
+            string nume = _clientSelectatGestiune.Nume;
+            _adminClienti.Sterge(_clientSelectatGestiune.Id);
+            _clientSelectatGestiune = null;
+
+            BtnGestAnuleaza_Click(null, null);
+            AfiseazaMesaj(TxtMesajGestiune, $" Clientul \"{nume}\" a fost șters.",
+                Color.FromRgb(0x2E, 0x7D, 0x32));
+            SetStatus($"Client șters: {nume}");
+            RefreshListaGestiune(TxtFiltruClienti.Text.Trim());
+        }
+
+        // Anulare 
+        private void BtnGestAnuleaza_Click(object sender, RoutedEventArgs e)
+        {
+            _clientSelectatGestiune = null;
+            _modAdaugare = false;
+            LstClientiGestiune.SelectedItem = null;
+
+            TxtGestClientId.IsReadOnly = true;
+            TxtGestClientId.Background = new SolidColorBrush(Color.FromRgb(0xF5, 0xF5, 0xF5));
+            TxtGestClientId.Foreground = Brushes.Gray;
+            TxtGestClientId.Text = string.Empty;
+            TxtGestClientNume.Text = string.Empty;
+            TxtGestClientTelefon.Text = string.Empty;
+            TxtGestClientEmail.Text = string.Empty;
+            TxtGestClientPuncte.Text = string.Empty;
+            DtpGestDataNasterii.SelectedDate = null;
+
+            TxtGestDataActualizare.Visibility = Visibility.Collapsed;
+            TxtMesajGestiune.Visibility = Visibility.Collapsed;
+            TxtTitluFormular.Text = "Selectează un client din listă pentru a edita";
+            TxtModCurent.Text = "— Niciun client selectat —";
+            AscundeEroariGestiune();
+        }
+
+        
+        //  VALIDARE
         
 
         private int ValideazaParfum()
         {
             int erori = 0;
-
             bool idOk = !string.IsNullOrWhiteSpace(TxtId.Text);
             MarcheazaCamp(TxtId, ErrId, LblId, idOk); if (!idOk) erori++;
 
@@ -384,14 +560,9 @@ namespace EssenceFlow
             return erori;
         }
 
-        
-        //  VALIDARE CLIENT
-        
-
         private int ValideazaClient()
         {
             int erori = 0;
-
             bool idOk = !string.IsNullOrWhiteSpace(TxtClientId.Text);
             MarcheazaCamp(TxtClientId, ErrClientId, LblClientId, idOk); if (!idOk) erori++;
 
@@ -409,6 +580,44 @@ namespace EssenceFlow
             MarcheazaCamp(TxtClientPuncte, ErrClientPuncte, LblClientPuncte, puncteOk); if (!puncteOk) erori++;
 
             return erori;
+        }
+
+        private bool ValideazaFormularGestiune()
+        {
+            bool valid = true;
+            if (_modAdaugare)
+            {
+                bool idOk = !string.IsNullOrWhiteSpace(TxtGestClientId.Text);
+                ErrGestId.Visibility = idOk ? Visibility.Collapsed : Visibility.Visible;
+                if (!idOk) valid = false;
+            }
+            bool numeOk = !string.IsNullOrWhiteSpace(TxtGestClientNume.Text);
+            ErrGestNume.Visibility = numeOk ? Visibility.Collapsed : Visibility.Visible;
+            if (!numeOk) valid = false;
+
+            bool telOk = !string.IsNullOrWhiteSpace(TxtGestClientTelefon.Text);
+            ErrGestTelefon.Visibility = telOk ? Visibility.Collapsed : Visibility.Visible;
+            if (!telOk) valid = false;
+
+            bool emailOk = !string.IsNullOrWhiteSpace(TxtGestClientEmail.Text)
+                           && TxtGestClientEmail.Text.Contains("@");
+            ErrGestEmail.Visibility = emailOk ? Visibility.Collapsed : Visibility.Visible;
+            if (!emailOk) valid = false;
+
+            bool puncteOk = int.TryParse(TxtGestClientPuncte.Text, out int pt) && pt >= 0;
+            ErrGestPuncte.Visibility = puncteOk ? Visibility.Collapsed : Visibility.Visible;
+            if (!puncteOk) valid = false;
+
+            return valid;
+        }
+
+        private void AscundeEroariGestiune()
+        {
+            ErrGestId.Visibility = Visibility.Collapsed;
+            ErrGestNume.Visibility = Visibility.Collapsed;
+            ErrGestTelefon.Visibility = Visibility.Collapsed;
+            ErrGestEmail.Visibility = Visibility.Collapsed;
+            ErrGestPuncte.Visibility = Visibility.Collapsed;
         }
 
         
@@ -430,9 +639,7 @@ namespace EssenceFlow
         }
 
         private void SetStatus(string mesaj)
-        {
-            TxtStatus.Text = $"[{DateTime.Now:HH:mm:ss}] {mesaj}";
-        }
+            => TxtStatus.Text = $"[{DateTime.Now:HH:mm:ss}] {mesaj}";
 
         private void GolesteFormularParfum()
         {
@@ -442,8 +649,6 @@ namespace EssenceFlow
             RbUniversal.IsChecked = true;
             ChkCasual.IsChecked = ChkBusiness.IsChecked = ChkSeara.IsChecked =
             ChkEveniment.IsChecked = ChkSport.IsChecked = false;
-
-            // Reset erori vizuale
             foreach (var tb in new[] { ErrId, ErrNume, ErrBrand, ErrCantitate, ErrStoc, ErrPret, ErrConcentratie, ErrSezon })
                 tb.Visibility = Visibility.Collapsed;
             foreach (var lbl in new[] { LblId, LblNume, LblBrand, LblCantitate, LblStoc, LblPret })
@@ -458,7 +663,6 @@ namespace EssenceFlow
             RbContactEmail.IsChecked = true;
             ChkPrefEDP.IsChecked = ChkPrefEDT.IsChecked = ChkPrefFloral.IsChecked =
             ChkPrefLemn.IsChecked = ChkPrefFruct.IsChecked = ChkPrefOri.IsChecked = false;
-
             foreach (var tb in new[] { ErrClientId, ErrClientNume, ErrClientTelefon, ErrClientEmail, ErrClientPuncte })
                 tb.Visibility = Visibility.Collapsed;
         }
